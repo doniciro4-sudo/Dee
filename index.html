@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnimeNAS - Nonton Anime Gratis</title>
+    <title>AnimeNAS - Streaming</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -12,31 +12,31 @@
         <nav>
             <div class="logo">Anime<span>NAS</span></div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari anime (min. 3 huruf)...">
+                <input type="text" id="searchInput" placeholder="Cari anime...">
                 <button id="searchBtn"><i class="fas fa-search"></i></button>
             </div>
         </nav>
     </header>
 
-    <main>
-        <section class="container">
-            <h2 id="sectionTitle">Trending Hari Ini</h2>
-            <div id="animeList" class="anime-grid">
-                </div>
-        </section>
+    <main class="container">
+        <h2 id="sectionTitle">Populer</h2>
+        <div id="animeList" class="anime-grid"></div>
     </main>
 
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h3 id="modalTitle">Judul Anime</h3>
+            <h3 id="modalTitle">Loading...</h3>
             <div class="video-wrapper">
                 <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
             </div>
-            <p class="warning">*Klik tombol 'Play' di dalam player. Jika muncul iklan pop-up, tutup saja.</p>
+            <div class="server-list">
+                <p>Ganti Server jika Error:</p>
+                <button onclick="changeServer(1)">Server 1</button>
+                <button onclick="changeServer(2)">Server 2</button>
+            </div>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
