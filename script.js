@@ -4,15 +4,15 @@ const searchInput = document.getElementById('searchInput');
 // 1. Fungsi Ambil Anime Populer (Saat Pertama Buka)
 async function getTrendingAnime() {
     try {
-        const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=20');
+        const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=24');
         const data = await res.json();
         displayAnime(data.data);
     } catch (err) {
-        console.error("Gagal mengambil data:", err);
+        animeListDiv.innerHTML = "<p>Gagal memuat data. Coba refresh halaman.</p>";
     }
 }
 
-// 2. Fungsi Menampilkan Kartu Anime ke HTML
+// 2. Tampilkan Kartu Anime
 function displayAnime(animes) {
     animeListDiv.innerHTML = "";
     animes.forEach(anime => {
@@ -20,50 +20,58 @@ function displayAnime(animes) {
         card.classList.add('anime-card');
         card.innerHTML = `
             <div class="rating"><i class="fas fa-star"></i> ${anime.score || 'N/A'}</div>
-            <img src="${anime.images.jpg.large_image_url}" alt="${anime.title}">
+            <img src="${anime.images.jpg.large_image_url}" alt="${anime.title}" loading="lazy">
             <div class="info">
-                <p>${anime.title.length > 20 ? anime.title.substring(0, 20) + "..." : anime.title}</p>
+                <p>${anime.title.length > 25 ? anime.title.substring(0, 25) + "..." : anime.title}</p>
             </div>
         `;
-        // Klik untuk nonton (Kita pakai search name sebagai trigger streaming)
-        card.onclick = () => openPlayer(anime.title);
+        // Klik untuk nonton pakai ID MyAnimeList
+        card.onclick = () => openPlayer(anime.title, anime.mal_id);
         animeListDiv.appendChild(card);
     });
 }
 
 // 3. Fungsi Cari Anime
 async function searchAnime() {
-    const query = searchInput.value;
-    if(query.length < 3) return;
+    const query = searchInput.value.trim();
+    if (query.length < 3) return;
     
-    animeListDiv.innerHTML = "<p>Mencari...</p>";
-    const res = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=20`);
-    const data = await res.json();
-    displayAnime(data.data);
+    animeListDiv.innerHTML = "<p>Mencari anime favoritmu...</p>";
+    try {
+        const res = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=24`);
+        const data = await res.json();
+        displayAnime(data.data);
+    } catch (err) {
+        animeListDiv.innerHTML = "<p>Terjadi kesalahan saat mencari.</p>";
+    }
 }
 
-// 4. Fungsi Buka Player Video (Gunakan Embed Link)
-function openPlayer(title) {
+// 4. Fungsi Buka Player Video
+function openPlayer(title, id) {
     const modal = document.getElementById('videoModal');
     const player = document.getElementById('videoPlayer');
     const mTitle = document.getElementById('modalTitle');
     
-    mTitle.innerText = "Menonton: " + title;
+    mTitle.innerText = "Nonton: " + title;
     
-    // Kita gunakan pihak ketiga untuk streaming (Contoh: mencari di gogoanime embed)
-    // Catatan: Ini adalah link simulasi, biasanya kamu butuh Consumet API untuk link asli.
-    const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-    player.src = `https://www.2embed.to/embed/anime/${slug}-episode-1`; 
+    // Menggunakan provider vidsrc (Tanpa API Key, tinggal tempel ID)
+    player.src = `https://vidsrc.to/embed/anime/${id}`; 
     
     modal.style.display = "block";
 }
 
+// 5. Fungsi Tutup Modal
 function closeModal() {
     const modal = document.getElementById('videoModal');
     const player = document.getElementById('videoPlayer');
     modal.style.display = "none";
-    player.src = ""; // Stop video saat ditutup
+    player.src = ""; // Stop video
 }
 
-// Jalankan saat web dibuka
+// Fitur Search dengan tombol Enter
+searchInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") searchAnime();
+});
+
+// Jalankan fungsi saat web dibuka
 getTrendingAnime();
