@@ -12,29 +12,28 @@
         <nav>
             <div class="logo">Anime<span>NAS</span></div>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Cari anime...">
-                <button onclick="searchAnime()"><i class="fas fa-search"></i></button>
+                <input type="text" id="searchInput" placeholder="Cari anime (min. 3 huruf)...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
             </div>
         </nav>
     </header>
 
     <main>
-        <section id="hero">
-            <h1>Update Anime Terbaru</h1>
-            <p>Tonton ribuan koleksi anime secara gratis.</p>
+        <section class="container">
+            <h2 id="sectionTitle">Trending Hari Ini</h2>
+            <div id="animeList" class="anime-grid">
+                </div>
         </section>
-
-        <section id="animeList" class="anime-grid">
-            </section>
     </main>
 
     <div id="videoModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="modalTitle">Loading...</h2>
-            <div class="video-container">
+            <span class="close-btn">&times;</span>
+            <h3 id="modalTitle">Judul Anime</h3>
+            <div class="video-wrapper">
                 <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
             </div>
+            <p class="warning">*Klik tombol 'Play' di dalam player. Jika muncul iklan pop-up, tutup saja.</p>
         </div>
     </div>
 
