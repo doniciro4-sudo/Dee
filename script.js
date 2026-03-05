@@ -1,18 +1,18 @@
 const animeListDiv = document.getElementById('animeList');
 const searchInput = document.getElementById('searchInput');
 
-// 1. Fungsi Ambil Anime Populer (Saat Pertama Buka)
+// 1. Ambil Anime Trending saat web dibuka
 async function getTrendingAnime() {
     try {
         const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=24');
         const data = await res.json();
         displayAnime(data.data);
     } catch (err) {
-        animeListDiv.innerHTML = "<p>Gagal memuat data. Coba refresh halaman.</p>";
+        animeListDiv.innerHTML = "<p style='color:white;'>Gagal memuat data. Coba refresh halaman.</p>";
     }
 }
 
-// 2. Tampilkan Kartu Anime
+// 2. Fungsi Menampilkan Kartu Anime
 function displayAnime(animes) {
     animeListDiv.innerHTML = "";
     animes.forEach(anime => {
@@ -25,7 +25,7 @@ function displayAnime(animes) {
                 <p>${anime.title.length > 25 ? anime.title.substring(0, 25) + "..." : anime.title}</p>
             </div>
         `;
-        // Klik untuk nonton pakai ID MyAnimeList
+        // Klik untuk nonton berdasarkan ID MyAnimeList agar akurat
         card.onclick = () => openPlayer(anime.title, anime.mal_id);
         animeListDiv.appendChild(card);
     });
@@ -36,17 +36,17 @@ async function searchAnime() {
     const query = searchInput.value.trim();
     if (query.length < 3) return;
     
-    animeListDiv.innerHTML = "<p>Mencari anime favoritmu...</p>";
+    animeListDiv.innerHTML = "<p style='color:white;'>Mencari anime...</p>";
     try {
         const res = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=24`);
         const data = await res.json();
         displayAnime(data.data);
     } catch (err) {
-        animeListDiv.innerHTML = "<p>Terjadi kesalahan saat mencari.</p>";
+        console.error("Error saat cari:", err);
     }
 }
 
-// 4. Fungsi Buka Player Video
+// 4. Buka Player Video (Ganti ke Vidsrc yang lebih stabil)
 function openPlayer(title, id) {
     const modal = document.getElementById('videoModal');
     const player = document.getElementById('videoPlayer');
@@ -54,24 +54,23 @@ function openPlayer(title, id) {
     
     mTitle.innerText = "Nonton: " + title;
     
-    // Menggunakan provider vidsrc (Tanpa API Key, tinggal tempel ID)
+    // Link ini lebih sakti karena pakai ID resmi MyAnimeList
     player.src = `https://vidsrc.to/embed/anime/${id}`; 
     
     modal.style.display = "block";
 }
 
-// 5. Fungsi Tutup Modal
+// 5. Tutup Modal
 function closeModal() {
     const modal = document.getElementById('videoModal');
     const player = document.getElementById('videoPlayer');
     modal.style.display = "none";
-    player.src = ""; // Stop video
+    player.src = ""; 
 }
 
-// Fitur Search dengan tombol Enter
+// Event Enter untuk Search
 searchInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") searchAnime();
 });
 
-// Jalankan fungsi saat web dibuka
 getTrendingAnime();
