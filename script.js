@@ -1,82 +1,22 @@
-const animeList = document.getElementById('animeList');
-const searchInput = document.getElementById('searchInput');
-const searchBtn = document.getElementById('searchBtn');
-const modal = document.getElementById('videoModal');
-const player = document.getElementById('videoPlayer');
-const modalTitle = document.getElementById('modalTitle');
-const closeBtn = document.querySelector('.close-btn');
-
-// 1. Ambil Data Trending Saat Load Halaman
-async function fetchTrending() {
-    try {
-        const response = await fetch('https://api.jikan.moe/v4/top/anime?limit=24');
-        const data = await response.json();
-        renderAnime(data.data);
-    } catch (err) {
-        animeList.innerHTML = `<p>Gagal memuat data. Periksa koneksi internet.</p>`;
-    }
-}
-
-// 2. Fungsi Menampilkan Kartu Anime
-function renderAnime(animes) {
-    animeList.innerHTML = "";
-    if (animes.length === 0) {
-        animeList.innerHTML = "<p>Anime tidak ditemukan.</p>";
-        return;
-    }
-    animes.forEach(anime => {
-        const card = document.createElement('div');
-        card.className = 'anime-card';
-        card.innerHTML = `
-            <div class="rating"><i class="fas fa-star"></i> ${anime.score || 'N/A'}</div>
-            <img src="${anime.images.jpg.large_image_url}" alt="${anime.title}" loading="lazy">
-            <div class="info">
-                <p title="${anime.title}">${anime.title}</p>
-            </div>
-        `;
-        // Gunakan ID MyAnimeList (mal_id) untuk link video
-        card.onclick = () => playVideo(anime.title, anime.mal_id);
-        animeList.appendChild(card);
-    });
-}
-
-// 3. Fungsi Pencarian
-async function searchAnime() {
-    const query = searchInput.value.trim();
-    if (query.length < 3) return;
-
-    document.getElementById('sectionTitle').innerText = `Hasil Pencarian: ${query}`;
-    animeList.innerHTML = "<p>Sedang mencari...</p>";
-    
-    try {
-        const response = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=24`);
-        const data = await response.json();
-        renderAnime(data.data);
-    } catch (err) {
-        console.error("Gagal mencari anime:", err);
-    }
-}
-
-// 4. Fungsi Player Video
-function playVideo(title, id) {
-    modalTitle.innerText = "Menonton: " + title;
-    // Menggunakan provider Vidsrc (Akurat dengan ID)
-    player.src = `https://vidsrc.to/embed/anime/${id}`;
-    modal.style.display = "block";
-    document.body.style.overflow = "hidden"; // Kunci scroll layar saat nonton
-}
-
-// 5. Fungsi Tutup Modal
-closeBtn.onclick = () => {
-    modal.style.display = "none";
-    player.src = ""; // Stop video
-    document.body.style.overflow = "auto";
-};
-
-// Event Listeners
-searchBtn.onclick = searchAnime;
-searchInput.onkeypress = (e) => { if (e.key === "Enter") searchAnime(); };
-window.onclick = (e) => { if (e.target == modal) closeBtn.onclick(); };
-
-// Jalankan saat pertama kali buka
-fetchTrending();
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+body { background: #0f1014; color: white; }
+header { background: #1a1b21; padding: 15px 5%; position: sticky; top: 0; z-index: 100; }
+nav { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 22px; font-weight: bold; color: #00ffcc; }
+.logo span { color: white; }
+.search-box { background: #2a2b32; padding: 5px 15px; border-radius: 20px; display: flex; }
+.search-box input { background: none; border: none; color: white; outline: none; padding: 5px; }
+.search-box button { background: none; border: none; color: #00ffcc; cursor: pointer; }
+.container { padding: 20px 5%; }
+.anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+.anime-card { background: #1a1b21; border-radius: 8px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+.anime-card:hover { transform: scale(1.05); }
+.anime-card img { width: 100%; height: 220px; object-fit: cover; }
+.info { padding: 10px; font-size: 13px; text-align: center; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; }
+.modal-content { width: 90%; max-width: 800px; margin: 50px auto; background: #1a1b21; padding: 20px; border-radius: 10px; position: relative; }
+.video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; }
+.video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.close-btn { position: absolute; right: 15px; top: 10px; font-size: 25px; cursor: pointer; }
+.server-list { margin-top: 15px; display: flex; gap: 10px; align-items: center; font-size: 12px; }
+.server-list button { background: #00ffcc; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
